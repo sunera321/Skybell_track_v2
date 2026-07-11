@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+enum JobStatus {
+  PENDING
+  SITE_VISITED
+  REVISIT_REQUIRED
+  POSTPONED
+  QUOTATION_SENT
+  COMPLETED
+  CANCELLED
+}
+
+enum QuotationStatus {
+  NOT_SENT
+  SENT
+  APPROVED
+  REJECTED
+}
+
+enum DocType {
+  QUOTATION
+  CONTRACT
+  INVOICE
+  OTHER
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(STAFF)
+  mustResetPassword Boolean @default(false)
+  createdAt    DateTime @default(now())
+
+  sitesCreated   Site[]         @relation("SiteCreatedBy")
+  photos         Photo[]
+  documents      Document[]
+  voiceNotes     VoiceNote[]
+  travelExpenses TravelExpense[]
+}
+
+model Site {
+  id          String   @id @default(cuid())
+  engineer    String
+  microbusinessManager String
+  customerName String
+  address     String
+  contactNumber String?
+  scope       String?
+  jobStatus   JobStatus @default(PENDING)
+  jobStatusNote String?
+  quotationStatus QuotationStatus @default(NOT_SENT)
+  solutionDetailsLochana String?
+  solutionDetailsBuddika String?
+  lat         Float?
+  lng         Float?
+  geocodedAt  DateTime?
+
+  createdById String?
+  createdBy   User?    @relation("SiteCreatedBy", fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bomItems       BomItem[]
+  photos         Photo[]
+  documents      Document[]
+  voiceNotes     VoiceNote[]
+  travelExpenses TravelExpense[]
+  tasks          Task[]
+
+  @@index([jobStatus])
+  @@index([engineer])
+  @@index([microbusinessManager])
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  siteId      String
+  site        Site      @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  description String
+  done        Boolean   @default(false)
+  doneAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([siteId])
+}
+
+model BomItem {
+  id        String   @id @default(cuid())
+  siteId    String
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  category  String
+  item      String
+  quantity  String
+  createdAt DateTime @default(now())
+
+  @@index([siteId])
+}
+
+model Photo {
+  id           String   @id @default(cuid())
+  siteId       String
+  site         Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  filename     String
+  originalName String
+  caption      String?
+  uploadedById String?
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
+  uploadedAt   DateTime @default(now())
+
+  @@index([siteId])
+}
+
+model Document {
+  id           String   @id @default(cuid())
+  siteId       String
+  site         Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  filename     String
+  originalName String
+  docType      DocType  @default(OTHER)
+  uploadedById String?
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
+  uploadedAt   DateTime @default(now())
+
+  @@index([siteId])
+}
+
+model VoiceNote {
+  id              String   @id @default(cuid())
+  siteId          String
+  site            Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  filename        String
+  durationSeconds Int?
+  label           String?
+  recordedById    String?
+  recordedBy      User?    @relation(fields: [recordedById], references: [id])
+  recordedAt      DateTime @default(now())
+
+  @@index([siteId])
+}
+
+model TravelExpense {
+  id                  String   @id @default(cuid())
+  siteId              String?
+  site                Site?    @relation(fields: [siteId], references: [id], onDelete: SetNull)
+  userId              String?
+  user                User?    @relation(fields: [userId], references: [id])
+  date                DateTime
+  purpose             String
+  amount              Float
+  distanceKm          Float?
+  receiptFilename     String?
+  receiptOriginalName String?
+  createdAt           DateTime @default(now())
+
+  @@index([userId])
+  @@index([siteId])
+}
