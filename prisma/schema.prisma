@@ -51,6 +51,22 @@ model User {
   documents      Document[]
   voiceNotes     VoiceNote[]
   travelExpenses TravelExpense[]
+  auditLogs      AuditLog[]
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String
+  entityId   String
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model Site {

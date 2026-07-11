@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { siteSchema } from "@/lib/validation";
 import { deleteSiteUploads } from "@/lib/storage";
 import { logger } from "@/lib/logger";
+import { logAudit } from "@/lib/audit";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -54,6 +55,29 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     },
   });
 
+  if (parsed.data.jobStatus !== undefined && parsed.data.jobStatus !== existing.jobStatus) {
+    await logAudit({
+      userId: session.user.id,
+      action: "site.jobStatus.change",
+      entityType: "Site",
+      entityId: id,
+      metadata: { from: existing.jobStatus, to: parsed.data.jobStatus },
+    });
+  }
+
+  if (
+    parsed.data.quotationStatus !== undefined &&
+    parsed.data.quotationStatus !== existing.quotationStatus
+  ) {
+    await logAudit({
+      userId: session.user.id,
+      action: "site.quotationStatus.change",
+      entityType: "Site",
+      entityId: id,
+      metadata: { from: existing.quotationStatus, to: parsed.data.quotationStatus },
+    });
+  }
+
   return NextResponse.json({ site });
 }
 
@@ -64,10 +88,22 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Admin only" }, { status: 403 });
 
   const { id } = await params;
+  const existing = await prisma.site.findUnique({ where: { id } });
+
   await prisma.site
     .delete({ where: { id } })
     .catch((err) => logger.warn({ err, siteId: id }, "site delete failed"));
   await deleteSiteUploads(id);
+
+  if (existing) {
+    await logAudit({
+      userId: session.user.id,
+      action: "site.delete",
+      entityType: "Site",
+      entityId: id,
+      metadata: { customerName: existing.customerName },
+    });
+  }
 
   return NextResponse.json({ ok: true });
 }

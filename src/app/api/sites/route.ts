@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { siteSchema } from "@/lib/validation";
+import { logAudit } from "@/lib/audit";
 import type { Prisma } from "@/generated/prisma/client";
 
 export async function GET(request: NextRequest) {
@@ -55,6 +56,14 @@ export async function POST(request: NextRequest) {
       ...parsed.data,
       createdById: session.user.id,
     },
+  });
+
+  await logAudit({
+    userId: session.user.id,
+    action: "site.create",
+    entityType: "Site",
+    entityId: site.id,
+    metadata: { customerName: site.customerName },
   });
 
   return NextResponse.json({ site }, { status: 201 });

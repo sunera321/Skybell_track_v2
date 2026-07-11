@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { userSchema } from "@/lib/validation";
+import { logAudit } from "@/lib/audit";
 
 function generateTempPassword() {
   return randomBytes(9).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(0, 12);
@@ -51,6 +52,14 @@ export async function POST(request: NextRequest) {
       mustResetPassword: true,
     },
     select: { id: true, name: true, email: true, role: true, createdAt: true, mustResetPassword: true },
+  });
+
+  await logAudit({
+    userId: session.user.id,
+    action: "user.create",
+    entityType: "User",
+    entityId: user.id,
+    metadata: { email: user.email, role: user.role },
   });
 
   return NextResponse.json({ user, tempPassword }, { status: 201 });

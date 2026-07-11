@@ -10,6 +10,7 @@ import {
   Building2,
   Receipt,
   Users,
+  ScrollText,
   LogOut,
   Menu,
   X,
@@ -22,6 +23,7 @@ const links = [
   { href: "/map", label: "Map", icon: MapPin, adminOnly: false },
   { href: "/expenses", label: "Expenses", icon: Receipt, adminOnly: false },
   { href: "/team", label: "Team", icon: Users, adminOnly: true },
+  { href: "/audit-log", label: "Audit Log", icon: ScrollText, adminOnly: true },
 ];
 
 export function Nav({
