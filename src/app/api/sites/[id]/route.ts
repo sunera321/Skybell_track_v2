@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { siteSchema } from "@/lib/validation";
 import { deleteSiteUploads } from "@/lib/storage";
+import { logger } from "@/lib/logger";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -63,7 +64,9 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Admin only" }, { status: 403 });
 
   const { id } = await params;
-  await prisma.site.delete({ where: { id } }).catch(() => null);
+  await prisma.site
+    .delete({ where: { id } })
+    .catch((err) => logger.warn({ err, siteId: id }, "site delete failed"));
   await deleteSiteUploads(id);
 
   return NextResponse.json({ ok: true });

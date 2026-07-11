@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { logger } from "@/lib/logger";
 
 export async function DELETE(
   _request: NextRequest,
@@ -15,7 +16,9 @@ export async function DELETE(
     return NextResponse.json({ error: "You cannot remove your own account" }, { status: 400 });
   }
 
-  await prisma.user.delete({ where: { id: userId } }).catch(() => null);
+  await prisma.user
+    .delete({ where: { id: userId } })
+    .catch((err) => logger.warn({ err, userId }, "user delete failed"));
 
   return NextResponse.json({ ok: true });
 }

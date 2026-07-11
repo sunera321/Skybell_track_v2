@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { absoluteFilePath, mimeTypeFor, type UploadKind } from "@/lib/storage";
+import { logger } from "@/lib/logger";
 
 export const runtime = "nodejs";
 
@@ -32,7 +33,8 @@ export async function GET(
         "Cache-Control": "private, max-age=31536000, immutable",
       },
     });
-  } catch {
+  } catch (err) {
+    logger.warn({ err, siteId, kind, filename }, "uploaded file read failed");
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 }

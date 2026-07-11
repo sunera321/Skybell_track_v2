@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { deleteExpenseUploads } from "@/lib/storage";
+import { logger } from "@/lib/logger";
 
 export async function DELETE(
   _request: NextRequest,
@@ -11,7 +12,9 @@ export async function DELETE(
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { expenseId } = await params;
-  await prisma.travelExpense.delete({ where: { id: expenseId } }).catch(() => null);
+  await prisma.travelExpense
+    .delete({ where: { id: expenseId } })
+    .catch((err) => logger.warn({ err, expenseId }, "expense delete failed"));
   await deleteExpenseUploads(expenseId);
 
   return NextResponse.json({ ok: true });

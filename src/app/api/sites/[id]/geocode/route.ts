@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { resolveLocationInput } from "@/lib/geo";
+import { logger } from "@/lib/logger";
 
 type Body =
   | { mode?: "address" }
@@ -83,7 +84,8 @@ export async function POST(
     }
     try {
       coords = await geocodeAddress(site.address);
-    } catch {
+    } catch (err) {
+      logger.error({ err, siteId: id, address: site.address }, "geocoding request failed");
       return NextResponse.json({ error: "Geocoding service unreachable" }, { status: 502 });
     }
     if (!coords) {

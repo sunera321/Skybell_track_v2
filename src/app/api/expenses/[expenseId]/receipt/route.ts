@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { readExpenseReceipt, mimeTypeFor } from "@/lib/storage";
+import { logger } from "@/lib/logger";
 
 export const runtime = "nodejs";
 
@@ -24,7 +25,8 @@ export async function GET(
         "Cache-Control": "private, max-age=31536000, immutable",
       },
     });
-  } catch {
+  } catch (err) {
+    logger.warn({ err, expenseId }, "receipt file read failed");
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 }
