@@ -77,6 +77,9 @@ model Site {
   address     String
   contactNumber String?
   scope       String?
+  poNumber    String?
+  invoiceNumber String?
+  customerRequirement String?
   jobStatus   JobStatus @default(PENDING)
   jobStatusNote String?
   quotationStatus QuotationStatus @default(NOT_SENT)

@@ -30,6 +30,9 @@ export function SiteForm({
     address: site?.address ?? "",
     contactNumber: site?.contactNumber ?? "",
     scope: site?.scope ?? "",
+    poNumber: site?.poNumber ?? "",
+    invoiceNumber: site?.invoiceNumber ?? "",
+    customerRequirement: site?.customerRequirement ?? "",
     jobStatus: site?.jobStatus ?? "PENDING",
     jobStatusNote: site?.jobStatusNote ?? "",
     quotationStatus: site?.quotationStatus ?? "NOT_SENT",
@@ -136,6 +139,33 @@ export function SiteForm({
           />
         </FieldGroup>
       </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <FieldGroup label="Purchase order number" htmlFor="poNumber">
+          <Input
+            id="poNumber"
+            value={form.poNumber ?? ""}
+            onChange={(e) => update("poNumber", e.target.value)}
+          />
+        </FieldGroup>
+
+        <FieldGroup label="Invoice number" htmlFor="invoiceNumber">
+          <Input
+            id="invoiceNumber"
+            value={form.invoiceNumber ?? ""}
+            onChange={(e) => update("invoiceNumber", e.target.value)}
+          />
+        </FieldGroup>
+      </div>
+
+      <FieldGroup label="Customer requirement" htmlFor="customerRequirement">
+        <Textarea
+          id="customerRequirement"
+          rows={3}
+          value={form.customerRequirement ?? ""}
+          onChange={(e) => update("customerRequirement", e.target.value)}
+        />
+      </FieldGroup>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <FieldGroup label="Job status" htmlFor="jobStatus">

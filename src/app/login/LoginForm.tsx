@@ -3,7 +3,7 @@
 import { useState, FormEvent, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Input, FieldGroup } from "@/components/ui/Field";
+import { Input, PasswordInput, FieldGroup } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 
 function LoginFormInner() {
@@ -51,9 +51,8 @@ function LoginFormInner() {
         />
       </FieldGroup>
       <FieldGroup label="Password" htmlFor="password">
-        <Input
+        <PasswordInput
           id="password"
-          type="password"
           autoComplete="current-password"
           required
           value={password}

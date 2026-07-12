@@ -12,6 +12,12 @@ export async function DELETE(
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { expenseId } = await params;
+  const expense = await prisma.travelExpense.findUnique({ where: { id: expenseId } });
+  if (!expense) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (session.user.role !== "ADMIN" && expense.userId !== session.user.id) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   await prisma.travelExpense
     .delete({ where: { id: expenseId } })
     .catch((err) => logger.warn({ err, expenseId }, "expense delete failed"));

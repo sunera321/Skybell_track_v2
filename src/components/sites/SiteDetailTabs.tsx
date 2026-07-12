@@ -9,6 +9,8 @@ import { PhotosTab } from "./PhotosTab";
 import { DocumentsTab } from "./DocumentsTab";
 import { VoiceNotesTab } from "./VoiceNotesTab";
 import { MapTab } from "./MapTab";
+import { OrderInfoTab } from "./OrderInfoTab";
+import { CustomerRequirementTab } from "./CustomerRequirementTab";
 import type { SiteWithRelations } from "./types";
 
 const TAB_DEFS = [
@@ -19,6 +21,8 @@ const TAB_DEFS = [
   { key: "documents", label: "Documents" },
   { key: "voice", label: "Voice Notes" },
   { key: "map", label: "Map" },
+  { key: "orderInfo", label: "Order Info" },
+  { key: "customerRequirement", label: "Customer Requirement" },
 ] as const;
 
 export function SiteDetailTabs({ site }: { site: SiteWithRelations }) {
@@ -47,6 +51,8 @@ export function SiteDetailTabs({ site }: { site: SiteWithRelations }) {
         {active === "documents" && <DocumentsTab site={site} />}
         {active === "voice" && <VoiceNotesTab site={site} />}
         {active === "map" && <MapTab site={site} />}
+        {active === "orderInfo" && <OrderInfoTab site={site} />}
+        {active === "customerRequirement" && <CustomerRequirementTab site={site} />}
       </div>
     </div>
   );

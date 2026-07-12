@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
       { customerName: { contains: q } },
       { address: { contains: q } },
       { scope: { contains: q } },
+      { contactNumber: { contains: q } },
     ];
   }
   if (engineer) where.engineer = engineer;

@@ -3,7 +3,7 @@
 import { useState, FormEvent } from "react";
 import { signOut } from "next-auth/react";
 import { Card, CardHeader, CardTitle, CardBody } from "@/components/ui/Card";
-import { Input, FieldGroup } from "@/components/ui/Field";
+import { PasswordInput, FieldGroup } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 
 export default function ChangePasswordPage() {
@@ -54,18 +54,16 @@ export default function ChangePasswordPage() {
           </p>
           <form onSubmit={onSubmit}>
             <FieldGroup label="New password" htmlFor="password">
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </FieldGroup>
             <FieldGroup label="Confirm new password" htmlFor="confirm">
-              <Input
+              <PasswordInput
                 id="confirm"
-                type="password"
                 required
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}

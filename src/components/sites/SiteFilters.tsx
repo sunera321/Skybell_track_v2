@@ -48,7 +48,7 @@ export function SiteFilters({
   return (
     <div className="mb-4 grid gap-3 sm:grid-cols-4">
       <Input
-        placeholder="Search customer, address, scope..."
+        placeholder="Search customer, address, scope, mobile number..."
         value={q}
         onChange={(e) => setQ(e.target.value)}
         className="sm:col-span-2"

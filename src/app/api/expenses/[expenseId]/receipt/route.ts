@@ -16,6 +16,9 @@ export async function GET(
   const { expenseId } = await params;
   const expense = await prisma.travelExpense.findUnique({ where: { id: expenseId } });
   if (!expense?.receiptFilename) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (session.user.role !== "ADMIN" && expense.userId !== session.user.id) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   try {
     const data = await readExpenseReceipt(expenseId, expense.receiptFilename);

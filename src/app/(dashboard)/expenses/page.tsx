@@ -1,15 +1,21 @@
 import Link from "next/link";
 import { Receipt } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/session";
 import { Card } from "@/components/ui/Card";
 import { AddExpenseForm } from "@/components/expenses/AddExpenseForm";
 import { DeleteExpenseButton } from "@/components/expenses/DeleteExpenseButton";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { expenseReceiptUrl } from "@/lib/file-url";
+import type { Prisma } from "@/generated/prisma/client";
 
 export default async function ExpensesPage() {
+  const user = await requireUser();
+  const where: Prisma.TravelExpenseWhereInput = user.role === "ADMIN" ? {} : { userId: user.id };
+
   const [expenses, sites] = await Promise.all([
     prisma.travelExpense.findMany({
+      where,
       orderBy: { date: "desc" },
       include: { site: { select: { id: true, customerName: true } }, user: { select: { name: true } } },
     }),

@@ -11,6 +11,7 @@ export async function GET() {
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const expenses = await prisma.travelExpense.findMany({
+    where: session.user.role === "ADMIN" ? {} : { userId: session.user.id },
     orderBy: { date: "desc" },
     include: { site: { select: { customerName: true } }, user: { select: { name: true } } },
   });

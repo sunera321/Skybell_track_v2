@@ -28,6 +28,7 @@ export default async function SitesPage({
       { customerName: { contains: q } },
       { address: { contains: q } },
       { scope: { contains: q } },
+      { contactNumber: { contains: q } },
     ];
   }
   if (engineer) where.engineer = engineer;
@@ -107,9 +108,7 @@ export default async function SitesPage({
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
-                  <span>
-                    {site.engineer} · {site.microbusinessManager}
-                  </span>
+                  <span>{site.engineer}</span>
                   <div className="flex items-center gap-3">
                     <span className="flex items-center gap-1">
                       <FileText size={13} /> {site._count.bomItems}
@@ -134,8 +133,7 @@ export default async function SitesPage({
                 <thead className="bg-black/[.02] text-xs uppercase text-muted">
                   <tr>
                     <th className="px-4 py-3 font-medium">Customer</th>
-                    <th className="px-4 py-3 font-medium">Engineer</th>
-                    <th className="px-4 py-3 font-medium">Manager</th>
+                    <th className="px-4 py-3 font-medium">Micro Manager</th>
                     <th className="px-4 py-3 font-medium">Job status</th>
                     <th className="px-4 py-3 font-medium">Quotation</th>
                     <th className="px-4 py-3 font-medium">Attachments</th>
@@ -152,7 +150,6 @@ export default async function SitesPage({
                         <div className="max-w-xs truncate text-xs text-muted">{site.address}</div>
                       </td>
                       <td className="px-4 py-3 text-muted">{site.engineer}</td>
-                      <td className="px-4 py-3 text-muted">{site.microbusinessManager}</td>
                       <td className="px-4 py-3">
                         <Badge tone={JOB_STATUS_TONE[site.jobStatus]}>
                           {JOB_STATUS_LABELS[site.jobStatus]}

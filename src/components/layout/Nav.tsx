@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
@@ -41,10 +42,14 @@ export function Nav({
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 font-semibold text-foreground">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand-500 text-sm text-white">
-              S
-            </span>
-            Skybell Tracker
+            <Image
+              src="/skybell-logo.png"
+              alt="Skybell"
+              width={1997}
+              height={884}
+              preload
+              className="h-8 w-auto"
+            />
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
             {visibleLinks.map((link) => {
