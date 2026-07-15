@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     root: path.join(__dirname),
   },
   serverExternalPackages: ["exceljs"],
+  outputFileTracingIncludes: {
+    "/*": ["./src/generated/prisma/**/*"],
+  },
 };
 
 export default nextConfig;
